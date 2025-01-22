@@ -50,10 +50,10 @@ def profile(request):
     numberOfStruggledQuestions = user.profile.questions.filter(questionrelation__relation_type="struggled").count()
     try:
     # Fetch tags with positive qualityPoints
-        positive_tags = user.profile.tag_stats.filter(qualityPoints__gt=0)
+        positive_tags = user.profile.tag_stats.filter(qualityPoints__gt=0).count.all()
 
     # Fetch tags with negative qualityPoints
-        negative_tags = user.profile.tag_stats.filter(qualityPoints__lt=0)
+        negative_tags = user.profile.tag_stats.filter(qualityPoints__lt=0).all()
 
     except AttributeError as e:
         print(f"AttributeError: {e}. Ensure 'user' has a valid profile and related tag stats.")
