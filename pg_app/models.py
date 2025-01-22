@@ -76,6 +76,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class QuestionRelation(models.Model):
+    """
+    Model to track the user's relation to each question. Has 5 relations (solved, excelled, struggled, unsolved, strugglingToSolve).
+    """
     profile = models.ForeignKey("Profile", on_delete=models.CASCADE)
     question = models.ForeignKey("Question", on_delete=models.CASCADE)
     relation_type = models.CharField(
@@ -90,8 +93,67 @@ class QuestionRelation(models.Model):
     )
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        # Check if the relation is being created or updated
+        if self.pk is None or self.relation_type:
+            self.update_tag_stats()
+        super().save(*args, **kwargs)
+
+    def update_tag_stats(self):
+        # Update UserTagStats for 'excelled' questions
+        if self.relation_type == "excelled":
+            for tag in self.question.topic_tags:
+                tag_stat, created = UserTagStats.objects.get_or_create(
+                    profile=self.profile, tag=tag
+                )
+                tag_stat.qualityPoints += 1
+
+                if not tag.isSolved:
+                    tag.isSolved = True
+
+                tag_stat.save()
+        elif self.relation_type == "struggled" or self.relation_type == "strugglingToSolve":
+            # Optionally handle decrementing counts if a relation is changed away from 'excelled'
+            for tag in self.question.topic_tags:
+                tag_stat, created = UserTagStats.objects.get_or_create(
+                    profile=self.profile, tag=tag
+                )
+                tag_stat.count = tag_stat.count - 1
+
+                if self.relation_type == "struggled" and not tag.isSolved:
+                    tag.isSolved = True
+                tag_stat.save()
+        elif self.relation_type == "solved":
+            tag.isSolved = True
+            tag_stat.save()
+                
+
     class Meta:
         unique_together = ("profile", "question", "relation_type")
+
+class UserTagStats(models.Model):
+    """
+    Model to track the user's relation to tags. Each tag has a counter and boolean.
+    QualityPoints- a counter to track the user's strength or weakness given a specific tag. 
+                    Unsolved questions and solved questions give 0 quality points, 
+                    strugglingToSolve gives -1 points, Struggled gives -1 point, 
+                    Excelled gives +2 points.
+    
+    """
+    profile = models.ForeignKey(
+        "Profile",
+        on_delete=models.CASCADE,
+        related_name="tag_stats"
+    )
+    tag = models.CharField(max_length=50)
+    qualityPoints = models.IntegerField(default=0)
+    isSolved = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ("profile", "tag")
+
+    def __str__(self):
+        return f"{self.profile.user.email} - {self.tag}: {self.count}"
 
 class Profile(models.Model):
     """

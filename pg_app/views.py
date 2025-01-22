@@ -48,7 +48,29 @@ def profile(request):
     user = request.user
     numberOfExcelledQuestions = user.profile.questions.filter(questionrelation__relation_type="excelled").count()
     numberOfStruggledQuestions = user.profile.questions.filter(questionrelation__relation_type="struggled").count()
-    return render(request, "profile.html", {"user": user, "numberOfExcelledQuestions": numberOfExcelledQuestions, "numberOfStruggledQuestions": numberOfStruggledQuestions })
+    try:
+    # Fetch tags with positive qualityPoints
+        positive_tags = user.profile.tag_stats.filter(qualityPoints__gt=0)
+
+    # Fetch tags with negative qualityPoints
+        negative_tags = user.profile.tag_stats.filter(qualityPoints__lt=0)
+
+    except AttributeError as e:
+        print(f"AttributeError: {e}. Ensure 'user' has a valid profile and related tag stats.")
+        positive_tags = []
+        negative_tags = []
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        positive_tags = []
+        negative_tags = []
+
+    return render(request,
+                   "profile.html",
+                     {  "user": user,
+                        "numberOfExcelledQuestions": numberOfExcelledQuestions,
+                        "numberOfStruggledQuestions": numberOfStruggledQuestions,
+                        "positive_tags": positive_tags,
+                        "negative_tags": negative_tags })
 
 
 @login_required()

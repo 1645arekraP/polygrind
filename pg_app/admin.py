@@ -17,7 +17,7 @@ class UserGroupAdmin(admin.ModelAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user','acceptance_rate','streak','friends','questions')
+    list_display = ('user','acceptance_rate','streak')
     search_fields = ('user__email', 'user__username')
 
 @admin.register(Solution)
