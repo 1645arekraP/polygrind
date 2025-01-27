@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .forms import RegistrationForm, LoginForm, GroupSettingsForm
-from django.contrib.auth import authenticate, login as dlogin
+from django.contrib.auth import authenticate, login as dlogin, logout
 from django.contrib.auth.decorators import login_required
 from .models import UserGroup
 from .utils.LeetcodeWrapper import LeetcodeWrapper
@@ -33,7 +33,7 @@ def login(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 dlogin(request, user)
-                return redirect("/accounts/profile/") #TODO: Bugged and will not work
+                return redirect("/account/profile/") #TODO: Bugged and will not work
             else:
                 print(user)
                 print("Wrong email or password")
@@ -107,3 +107,8 @@ def update_solution(request, username):
     except Exception as e:
         print(e)
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+@login_required()
+def logout_view(request):
+    logout(request)
+    return redirect('login')

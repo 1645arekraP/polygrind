@@ -9,4 +9,5 @@ urlpatterns = [
     path("account/update-solution/<str:username>/", views.update_solution, name="solution_check"),
     path("account/profile/", views.profile, name="home"),
     path("group/<str:invite_code>/", views.group, name="group"),
+    path("account/logout/", views.logout_view, name="logout"),
 ]
