@@ -3461,18 +3461,6 @@ html {
   height: 100vh;
 }
 
-.max-h-screen {
-  max-height: 100vh;
-}
-
-.max-h-\[50vh\] {
-  max-height: 50vh;
-}
-
-.max-h-\[20vh\] {
-  max-height: 20vh;
-}
-
 .max-h-\[40vh\] {
   max-height: 40vh;
 }
@@ -3637,6 +3625,11 @@ html {
   background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1));
 }
 
+.bg-base-300 {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-bg-opacity, 1)));
+}
+
 .fill-current {
   fill: currentColor;
 }
@@ -3750,6 +3743,16 @@ html {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.text-error {
+  --tw-text-opacity: 1;
+  color: var(--fallback-er,oklch(var(--er)/var(--tw-text-opacity, 1)));
+}
+
+.text-success {
+  --tw-text-opacity: 1;
+  color: var(--fallback-su,oklch(var(--su)/var(--tw-text-opacity, 1)));
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -3800,10 +3803,6 @@ html {
 }
 
 @media (min-width: 640px) {
-  .sm\:max-h-\[70vh\] {
-    max-height: 70vh;
-  }
-
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3833,10 +3832,6 @@ html {
 }
 
 @media (min-width: 1024px) {
-  .lg\:max-h-screen {
-    max-height: 100vh;
-  }
-
   .lg\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }

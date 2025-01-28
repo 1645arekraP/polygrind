@@ -32,12 +32,16 @@
               <li><a href="/account/profile">Profile</a></li>
               <li><a>Playground</a></li>
               <li><a>Settings</a></li>
-              <li><a href="/account/logout">Logout</a></li>
+              {% if user.is_authenticated %}
+                <li><a href="/account/logout">Logout</a></li>
+              {%else%}
+                <li><a href="/account/login">Login</a></li>
+              {%endif%}
             </ul>
           </div>
         </div>
         <div class="navbar-center">
-          <a class="btn btn-ghost text-xl">PolyGrind</a>
+          <a class="btn btn-ghost text-xl" href="/">PolyGrind</a>
         </div>
         <div class="navbar-end">
             <label class="swap swap-rotate pr-5">
